@@ -1,35 +1,66 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import { Platform } from 'react-native';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+const COLORS = {
+  bg: '#2a2424',
+  surface: '#393232',
+  elevated: '#4d4545',
+  accent: '#8d6262',
+  highlight: '#ed8d8d',
+  text: '#f5eded',
+  textDim: '#7a6464',
+};
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        tabBarStyle: {
+          backgroundColor: COLORS.surface,
+          borderTopColor: COLORS.elevated,
+          borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 85 : 65,
+          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          paddingTop: 10,
+        },
+        tabBarActiveTintColor: COLORS.highlight,
+        tabBarInactiveTintColor: COLORS.textDim,
+        tabBarLabelStyle: {
+          fontSize: 11,
+          letterSpacing: 0.5,
+          fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+          marginTop: 2,
+        },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'search',
+          tabBarIcon: ({ color }) => (
+            <TabIcon label="◎" color={color} />
+          ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="my-words"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'my words',
+          tabBarIcon: ({ color }) => (
+            <TabIcon label="◈" color={color} />
+          ),
         }}
       />
     </Tabs>
+  );
+}
+
+function TabIcon({ label, color }: { label: string; color: string }) {
+  const { Text } = require('react-native');
+  return (
+    <Text style={{ fontSize: 20, color }}>
+      {label}
+    </Text>
   );
 }
