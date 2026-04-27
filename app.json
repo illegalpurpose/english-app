@@ -1,7 +1,7 @@
 {
     "expo": {
-        "name": "wordly",
-        "slug": "wordly",
+        "name": "Wordly",
+        "slug": "Wordly",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",

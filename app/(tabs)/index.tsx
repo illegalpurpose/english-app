@@ -3,7 +3,6 @@ import { useAudioPlayer } from "expo-audio";
 import React, { useRef, useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     Animated,
     Platform,
     ScrollView,
@@ -130,16 +129,11 @@ export default function HomeScreen() {
             const list = saved ? JSON.parse(saved) : [];
             const exists = list.find((w: any) => w.word === wordData[0].word);
             if (exists) {
-                Alert.alert(
-                    "Already saved",
-                    `"${wordData[0].word}" is already in your words.`,
-                );
                 return;
             }
             list.push(wordData[0]);
             await AsyncStorage.setItem("savedWords", JSON.stringify(list));
             setSavedWords((prev) => [...prev, wordData[0].word]);
-            Alert.alert("Saved!", `"${wordData[0].word}" added to My Words.`);
         } catch {}
     };
 
@@ -257,6 +251,7 @@ export default function HomeScreen() {
                         <View style={styles.divider} />
 
                         {/* Meanings */}
+
                         {wordData.map((entry, ei) =>
                             entry.meanings.map((meaning, mi) => (
                                 <View
@@ -293,34 +288,27 @@ export default function HomeScreen() {
                                         </Text>
                                     </View>
 
-                                    {meaning.definitions
-                                        .slice(0, 3)
-                                        .map((def, di) => (
-                                            <View
-                                                key={di}
-                                                style={styles.defItem}
-                                            >
-                                                <Text style={styles.defNumber}>
-                                                    {di + 1}
+                                    {meaning.definitions.map((def, di) => (
+                                        <View key={di} style={styles.defItem}>
+                                            <Text style={styles.defNumber}>
+                                                {di + 1}
+                                            </Text>
+                                            <View style={styles.defContent}>
+                                                <Text style={styles.defText}>
+                                                    {def.definition}
                                                 </Text>
-                                                <View style={styles.defContent}>
+                                                {def.example ? (
                                                     <Text
-                                                        style={styles.defText}
+                                                        style={
+                                                            styles.defExample
+                                                        }
                                                     >
-                                                        {def.definition}
+                                                        "{def.example}"
                                                     </Text>
-                                                    {def.example ? (
-                                                        <Text
-                                                            style={
-                                                                styles.defExample
-                                                            }
-                                                        >
-                                                            "{def.example}"
-                                                        </Text>
-                                                    ) : null}
-                                                </View>
+                                                ) : null}
                                             </View>
-                                        ))}
+                                        </View>
+                                    ))}
 
                                     {meaning.definitions[0]?.synonyms?.length >
                                         0 && (
@@ -329,9 +317,9 @@ export default function HomeScreen() {
                                                 syn:{" "}
                                             </Text>
                                             <Text style={styles.synWords}>
-                                                {meaning.definitions[0].synonyms
-                                                    .slice(0, 4)
-                                                    .join(", ")}
+                                                {meaning.definitions[0].synonyms.join(
+                                                    ", ",
+                                                )}
                                             </Text>
                                         </View>
                                     )}
@@ -396,13 +384,13 @@ const styles = StyleSheet.create({
     },
     logo: {
         fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
-        fontSize: 42,
+        fontSize: 48,
         color: COLORS.highlight,
         fontWeight: "400",
         letterSpacing: 3,
     },
     tagline: {
-        fontSize: 12,
+        fontSize: 13,
         color: COLORS.textDim,
         letterSpacing: 2,
         marginTop: 4,
@@ -419,7 +407,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         paddingHorizontal: 20,
         paddingVertical: 14,
-        fontSize: 16,
+        fontSize: 17,
         color: COLORS.text,
         borderWidth: 1,
         borderColor: COLORS.border,
@@ -433,7 +421,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     searchBtnText: {
-        fontSize: 22,
+        fontSize: 24,
         color: COLORS.surface,
         fontWeight: "700",
     },
@@ -444,7 +432,7 @@ const styles = StyleSheet.create({
     },
     loadingText: {
         color: COLORS.textDim,
-        fontSize: 14,
+        fontSize: 15,
         letterSpacing: 1,
     },
     errorCard: {
@@ -462,7 +450,7 @@ const styles = StyleSheet.create({
     },
     errorText: {
         color: COLORS.textMuted,
-        fontSize: 15,
+        fontSize: 16,
         textAlign: "center",
     },
     wordCard: {
@@ -483,7 +471,7 @@ const styles = StyleSheet.create({
     },
     wordTitle: {
         fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
-        fontSize: 36,
+        fontSize: 40,
         color: COLORS.text,
         fontWeight: "400",
         letterSpacing: 1,
@@ -501,10 +489,10 @@ const styles = StyleSheet.create({
         color: COLORS.highlight,
     },
     phonetic: {
-        fontSize: 16,
+        fontSize: 18,
         color: COLORS.accent,
         marginTop: 4,
-        fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
+        fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
         fontStyle: "italic",
     },
     divider: {
@@ -524,7 +512,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     posText: {
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: "600",
         letterSpacing: 1,
         textTransform: "uppercase",
@@ -532,10 +520,10 @@ const styles = StyleSheet.create({
     defItem: {
         flexDirection: "row",
         gap: 12,
-        marginBottom: 10,
+        marginBottom: 12,
     },
     defNumber: {
-        fontSize: 11,
+        fontSize: 12,
         color: COLORS.textDim,
         width: 16,
         paddingTop: 2,
@@ -543,32 +531,32 @@ const styles = StyleSheet.create({
     },
     defContent: {
         flex: 1,
-        gap: 4,
+        gap: 6,
     },
     defText: {
-        fontSize: 15,
+        fontSize: 16,
         color: COLORS.text,
-        lineHeight: 22,
+        lineHeight: 24,
     },
     defExample: {
-        fontSize: 13,
+        fontSize: 14,
         color: COLORS.textDim,
         fontStyle: "italic",
-        lineHeight: 19,
+        lineHeight: 21,
     },
     synRow: {
         flexDirection: "row",
         flexWrap: "wrap",
-        marginTop: 6,
+        marginTop: 8,
         paddingLeft: 28,
     },
     synLabel: {
-        fontSize: 13,
+        fontSize: 14,
         color: COLORS.textDim,
         fontStyle: "italic",
     },
     synWords: {
-        fontSize: 13,
+        fontSize: 14,
         color: COLORS.accent,
     },
     saveBtn: {
@@ -576,13 +564,13 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 14,
         alignItems: "center",
-        marginTop: 8,
+        marginTop: 12,
     },
     saveBtnSaved: {
         backgroundColor: COLORS.elevated,
     },
     saveBtnText: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: "700",
         color: COLORS.surface,
         letterSpacing: 0.5,
@@ -601,9 +589,9 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         color: COLORS.textDim,
-        fontSize: 15,
+        fontSize: 16,
         textAlign: "center",
-        lineHeight: 22,
+        lineHeight: 24,
         letterSpacing: 0.3,
     },
 });
